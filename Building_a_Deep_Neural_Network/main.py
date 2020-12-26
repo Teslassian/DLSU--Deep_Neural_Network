@@ -152,3 +152,22 @@ def linear_activation_forward(A_prev, W, b, activation):
 # print("With sigmoid: A = " + str(A))
 # A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "relu")
 # print("With ReLU: A = " + str(A))
+
+# Function for forward propagation over all L layers
+def L_model_forward(X, parameters):
+    """
+    Implement forward propagation for the [LINEAR->RELU]*(L-1)->LINEAR->SIGMOID computation
+
+    Arguments:
+    X -- data, numpy array of shape (input size, number of examples)
+    parameters -- output of initialize_parameters_deep()
+
+    Returns:
+    AL -- last post-activation value
+    caches -- list of caches containing:
+                every cache of linear_activation_forward() (there are L-1 of them, indexed from 0 to L-1)
+    """
+
+    caches = []
+    A = X
+    L = len(parameters) // 2
