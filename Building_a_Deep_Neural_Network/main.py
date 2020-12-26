@@ -52,9 +52,103 @@ def initialize_parameters(n_x, n_h, n_y):
                   "b2": b2}
 
     return parameters
-# Test the initialize_parameters function
-parameters = initialize_parameters(3,2,1)
-print("W1 = " + str(parameters["W1"]))
-print("b1 = " + str(parameters["b1"]))
-print("W2 = " + str(parameters["W2"]))
-print("b2 = " + str(parameters["b2"]))
+# # Test the initialize_parameters function
+# parameters = initialize_parameters(3,2,1)
+# print("W1 = " + str(parameters["W1"]))
+# print("b1 = " + str(parameters["b1"]))
+# print("W2 = " + str(parameters["W2"]))
+# print("b2 = " + str(parameters["b2"]))
+
+# Function for initializing the parameters W and b for a deep network
+def initialize_parameters_deep(layer_dims):
+    """
+    Arguments:
+    layer_dims -- python array (list) containing the dimensions of each layer in our network
+
+    Returns:
+    parameters -- python dictionary containing your parameters "W1", "b1", ..., "WL", "bL":
+                    Wl -- weight matrix of shape (layer_dims[l], layer_dims[l-1])
+                    bl -- bias vector of shape (layer_dims[l], 1)
+    """
+
+    np.random.seed(3)
+    parameters = {}
+    L = len(layer_dims) # number of layers in the network
+
+    for l in range(1,L):
+        parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
+        parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
+        # assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+        # assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+
+    return parameters
+# # Test the initialize_parameters_deep function
+# parameters = initialize_parameters_deep([5,4,3])
+# print("W1 = " + str(parameters["W1"]))
+# print("b1 = " + str(parameters["b1"]))
+# print("W2 = " + str(parameters["W2"]))
+# print("b2 = " + str(parameters["b2"]))
+
+# Function for the linear part of forward propagation
+def linear_forward(A, W, b):
+    """
+    Implement the linear part of a layer's forward propagation.
+
+    Arguments:
+    A -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+
+    Returns:
+    Z -- the input of the activation function, also called pre-activation parameter
+    cache -- a python tuple containing "A", "W" and "b" ; stored for computing the backward pass efficiently
+    """
+
+    Z = W @ A + b
+
+    assert(Z.shape == (W.shape[0], A.shape[1]))
+    cache = (A, W, b)
+
+    return Z, cache
+# # Test the linear_forward function
+# A, W, b = linear_forward_test_case()
+# Z, linear_cache = linear_forward(A, W, b)
+# print("Z = " + str(Z))
+
+# Function for the activation part of forward propagation
+def linear_activation_forward(A_prev, W, b, activation):
+    """
+    Implement the forward propagation for the LINEAR->ACTIVATION layer
+
+    Arguments:
+    A_prev -- activations from previous layer (or input data): (size of previous layer, number of examples)
+    W -- weights matrix: numpy array of shape (size of current layer, size of previous layer)
+    b -- bias vector, numpy array of shape (size of the current layer, 1)
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+
+    Returns:
+    A -- the output of the activation function, also called the post-activation value
+    cache -- a python tuple containing "linear_cache" and "activation_cache";
+             stored for computing the backward pass efficiently
+    """
+
+    if activation == 'sigmoid':
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        Z, linear_cache = linear_forward(A_prev, W, b) # linear_cache is just (A_prev, W, b)
+        A, activation_cache = sigmoid(Z) # activation_cache is just Z
+
+    elif activation == "relu":
+        # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
+        Z, linear_cache = linear_forward(A_prev, W, b)
+        A, activation_cache = relu(Z)
+
+    assert (A.shape = (W.shape[0], A_prev.shape[1]))
+    cache = (linear_cache, activation_cache)
+
+    return A, cache
+# # Test the linear_activation_forward function
+# A_prev, W, b = linear_activation_forward_test_case()
+# A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "sigmoid")
+# print("With sigmoid: A = " + str(A))
+# A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "relu")
+# print("With ReLU: A = " + str(A))
