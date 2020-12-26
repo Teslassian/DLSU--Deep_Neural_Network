@@ -12,7 +12,7 @@ def linear_forward_test_case():
     A = np.random.randn(3,2)
     W = np.random.randn(1,3)
     b = np.random.randn(1,1)
-    
+
     return A, W, b
 
 def linear_activation_forward_test_case():
@@ -51,13 +51,13 @@ def L_model_forward_test_case():
                   "b1": b1,
                   "W2": W2,
                   "b2": b2}
-    
+
     return X, parameters
 
 def compute_cost_test_case():
     Y = np.asarray([[1, 1, 0]])
     aL = np.array([[.8,.9,0.4]])
-    
+
     return Y, aL
 
 def linear_backward_test_case():
@@ -87,7 +87,7 @@ def linear_activation_backward_test_case():
     linear_cache = (A, W, b)
     activation_cache = Z
     linear_activation_cache = (linear_cache, activation_cache)
-    
+
     return dA, linear_activation_cache
 
 def L_model_backward_test_case():
@@ -183,9 +183,8 @@ def update_parameters_test_case():
              "db1": db1,
              "dW2": dW2,
              "db2": db2}
-    
-    return parameters, grads
 
+    return parameters, grads
 
 def L_model_forward_test_case_2hidden():
     np.random.seed(6)
@@ -196,18 +195,17 @@ def L_model_forward_test_case_2hidden():
     b2 = np.random.randn(3,1)
     W3 = np.random.randn(1,3)
     b3 = np.random.randn(1,1)
-  
+
     parameters = {"W1": W1,
                   "b1": b1,
                   "W2": W2,
                   "b2": b2,
                   "W3": W3,
                   "b3": b3}
-    
+
     return X, parameters
 
 def print_grads(grads):
     print ("dW1 = "+ str(grads["dW1"]))
     print ("db1 = "+ str(grads["db1"]))
-    print ("dA1 = "+ str(grads["dA1"]))     
-    
+    print ("dA1 = "+ str(grads["dA1"]))
