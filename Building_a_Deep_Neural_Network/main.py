@@ -18,46 +18,46 @@ plt.rcParams['image.cmap'] = 'gray'
 # seed for randomly initialized weights
 np.random.seed(1)
 
-# Function for initializing the parameters W and b
-def initialize_parameters(n_x, n_h, n_y):
-    """
-    Argument:
-    n_x -- size of the input layer
-    n_h -- size of the hidden layer
-    n_y -- size of the output layer
-
-    Returns:
-    parameters -- python dictionary containing your parameters:
-                    W1 -- weight matrix of shape (n_h, n_x)
-                    b1 -- bias vector of shape (n_h, 1)
-                    W2 -- weight matrix of shape (n_y, n_h)
-                    b2 -- bias vector of shape (n_y, 1)
-    """
-
-    np.random.seed(1)
-
-    W1 = np.random.randn(n_h, n_x) * 0.01
-    b1 = np.zeros((n_h, 1))
-    W2 = np.random.randn(n_y, n_h) * 0.01
-    b2 = np.zeros((n_y, 1))
-
-    assert(W1.shape == (n_h, n_x))
-    assert(b1.shape == (n_h, 1))
-    assert(W2.shape == (n_y, n_h))
-    assert(b2.shape == (n_y, 1))
-
-    parameters = {"W1": W1,
-                  "b1": b1,
-                  "W2": W2,
-                  "b2": b2}
-
-    return parameters
-# # Test the initialize_parameters function
-# parameters = initialize_parameters(3,2,1)
-# print("W1 = " + str(parameters["W1"]))
-# print("b1 = " + str(parameters["b1"]))
-# print("W2 = " + str(parameters["W2"]))
-# print("b2 = " + str(parameters["b2"]))
+# # Function for initializing the parameters W and b
+# def initialize_parameters(n_x, n_h, n_y):
+#     """
+#     Argument:
+#     n_x -- size of the input layer
+#     n_h -- size of the hidden layer
+#     n_y -- size of the output layer
+#
+#     Returns:
+#     parameters -- python dictionary containing your parameters:
+#                     W1 -- weight matrix of shape (n_h, n_x)
+#                     b1 -- bias vector of shape (n_h, 1)
+#                     W2 -- weight matrix of shape (n_y, n_h)
+#                     b2 -- bias vector of shape (n_y, 1)
+#     """
+#
+#     np.random.seed(1)
+#
+#     W1 = np.random.randn(n_h, n_x) * 0.01
+#     b1 = np.zeros((n_h, 1))
+#     W2 = np.random.randn(n_y, n_h) * 0.01
+#     b2 = np.zeros((n_y, 1))
+#
+#     assert(W1.shape == (n_h, n_x))
+#     assert(b1.shape == (n_h, 1))
+#     assert(W2.shape == (n_y, n_h))
+#     assert(b2.shape == (n_y, 1))
+#
+#     parameters = {"W1": W1,
+#                   "b1": b1,
+#                   "W2": W2,
+#                   "b2": b2}
+#
+#     return parameters
+# # # Test the initialize_parameters function
+# # parameters = initialize_parameters(3,2,1)
+# # print("W1 = " + str(parameters["W1"]))
+# # print("b1 = " + str(parameters["b1"]))
+# # print("W2 = " + str(parameters["W2"]))
+# # print("b2 = " + str(parameters["b2"]))
 
 # Function for initializing the parameters W and b for a deep network
 def initialize_parameters_deep(layer_dims):
@@ -104,7 +104,9 @@ def linear_forward(A, W, b):
     cache -- a python tuple containing "A", "W" and "b" ; stored for computing the backward pass efficiently
     """
 
-    Z = W @ A + b
+    Z = W @ A + b # Note that A refers to the inputs received from the previous layer,
+                  # other than in the linear_activation_forward function, where A_prev
+                  # is used to refer to those inputs
 
     assert(Z.shape == (W.shape[0], A.shape[1]))
     cache = (A, W, b)
@@ -142,7 +144,7 @@ def linear_activation_forward(A_prev, W, b, activation):
         Z, linear_cache = linear_forward(A_prev, W, b)
         A, activation_cache = relu(Z)
 
-    assert (A.shape = (W.shape[0], A_prev.shape[1]))
+    assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
 
     return A, cache
@@ -170,4 +172,45 @@ def L_model_forward(X, parameters):
 
     caches = []
     A = X
-    L = len(parameters) // 2
+    L = len(parameters) // 2 # to obtain the number of layers
+
+    # Implementation of relu(Linear) for hidden layers
+    for l in range(1,L):
+        A_prev = A
+        A, cache = linear_activation_forward(A_prev, parameters['W'+str(l)], parameters['b'+str(l)], 'relu')
+        caches.append(cache)
+
+    # Implementation of sigmoid(Linear) for output layer
+    AL, cache = linear_activation_forward(A, parameters['W'+str(l+1)], parameters['b'+str(l+1)], 'sigmoid')
+    caches.append(cache)
+
+    assert(AL.shape == (1,X.shape[1]))
+
+    return AL, caches
+# # Test the L_model_forward function
+# X, parameters = L_model_forward_test_case_2hidden()
+# AL, caches = L_model_forward(X, parameters)
+# print("AL = " + str(AL))
+# print("Length of caches list = " + str(len(caches)))
+
+# Function for computing the cross entropy cost J
+def compute_cost(AL, Y):
+    """
+    Implement the cost function defined by equation (7).
+
+    Arguments:
+    AL -- probability vector corresponding to your label predictions, shape (1, number of examples)
+    Y -- true "label" vector (for example: containing 0 if non-cat, 1 if cat), shape (1, number of examples)
+
+    Returns:
+    cost -- cross-entropy cost
+    """
+
+    m = Y.shape[1]
+
+    cost = -1/m * (Y @ np.log(AL).T + (1-Y) @ np.log(1-AL).T)
+
+    return cost
+# # Test the compute_cost function
+# Y, AL = compute_cost_test_case()
+# print("cost = " + str(compute_cost(AL, Y)))
