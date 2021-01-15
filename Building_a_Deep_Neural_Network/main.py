@@ -82,12 +82,12 @@ def initialize_parameters_deep(layer_dims):
         # assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
 
     return parameters
-# Test the initialize_parameters_deep function
-parameters = initialize_parameters_deep([5,4,3])
-print("W1 = " + str(parameters["W1"]))
-print("b1 = " + str(parameters["b1"]))
-print("W2 = " + str(parameters["W2"]))
-print("b2 = " + str(parameters["b2"]))
+# # Test the initialize_parameters_deep function
+# parameters = initialize_parameters_deep([5,4,3])
+# print("W1 = " + str(parameters["W1"]))
+# print("b1 = " + str(parameters["b1"]))
+# print("W2 = " + str(parameters["W2"]))
+# print("b2 = " + str(parameters["b2"]))
 
 # Function for the linear part of forward propagation
 def linear_forward(A, W, b):
@@ -112,10 +112,9 @@ def linear_forward(A, W, b):
     cache = (A, W, b)
 
     return Z, cache
-# Test the linear_forward function
-A, W, b = linear_forward_test_case()
-Z, linear_cache = linear_forward(A, W, b)
-print("Z = " + str(Z))
+# # Test the linear_forward function
+# A, W, b = linear_forward_test_case()
+# rprint("Z = " + str(Z))
 
 # Function for the activation part of forward propagation
 def linear_activation_forward(A_prev, W, b, activation):
@@ -141,19 +140,19 @@ def linear_activation_forward(A_prev, W, b, activation):
 
     elif activation == "relu":
         # Inputs: "A_prev, W, b". Outputs: "A, activation_cache".
-        Z, linear_cache = linear_forward(A_prev, W, b)
-        A, activation_cache = relu(Z)
+        Z, linear_cache = linear_forward(A_prev, W, b) # linear_cache is just (A_prev, W, b)
+        A, activation_cache = relu(Z) # activation_cache is just Z
 
     assert (A.shape == (W.shape[0], A_prev.shape[1]))
     cache = (linear_cache, activation_cache)
 
     return A, cache
-# Test the linear_activation_forward function
-A_prev, W, b = linear_activation_forward_test_case()
-A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "sigmoid")
-print("With sigmoid: A = " + str(A))
-A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "relu")
-print("With ReLU: A = " + str(A))
+# # Test the linear_activation_forward function
+# A_prev, W, b = linear_activation_forward_test_case()
+# A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "sigmoid")
+# print("With sigmoid: A = " + str(A))
+# A, linear_activation_cache = linear_activation_forward(A_prev, W, b, activation = "relu")
+# print("With ReLU: A = " + str(A))
 
 # Function for forward propagation over all L layers
 def L_model_forward(X, parameters):
@@ -187,11 +186,11 @@ def L_model_forward(X, parameters):
     assert(AL.shape == (1,X.shape[1]))
 
     return AL, caches
-# Test the L_model_forward function
-X, parameters = L_model_forward_test_case_2hidden()
-AL, caches = L_model_forward(X, parameters)
-print("AL = " + str(AL))
-print("Length of caches list = " + str(len(caches)))
+# # Test the L_model_forward function
+# X, parameters = L_model_forward_test_case_2hidden()
+# AL, caches = L_model_forward(X, parameters)
+# print("AL = " + str(AL))
+# print("Length of caches list = " + str(len(caches)))
 
 # Function for computing the cross entropy cost J
 def compute_cost(AL, Y):
@@ -211,6 +210,37 @@ def compute_cost(AL, Y):
     cost = -1/m * (Y @ np.log(AL).T + (1-Y) @ np.log(1-AL).T)
 
     return cost
-# Test the compute_cost function
-Y, AL = compute_cost_test_case()
-print("cost = " + str(compute_cost(AL, Y)))
+# # Test the compute_cost function
+
+# Function for the linear part of backpropagation
+def linear_backward(dZ, cache):
+    """
+    Implement the linear portion of backward propagation for a single layer (layer l)
+
+    Arguments:
+    dZ -- Gradient of the cost with respect to the linear output (of current layer l)
+    cache -- tuple of values (A_prev, W, b) coming from the forward propagation in the current layer
+
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    A_prev, W, b = cache;
+    m = A_prev.shape[1]
+
+    dW = 1/m * dZ @ A_prev.T
+    db = 1/m * np.sum(dZ, axis=1, keepdims=True)
+    dA_prev = W.T @ dZ
+
+    assert (dA_prev.shape == A_prev.shape)
+    assert (dW.shape == W.shape)
+    assert (db.shape == b.shape)
+
+    return dA_prev, dW, db
+# Test the linear_backward function
+dZ, linear_cache = linear_backward_test_case()
+dA_prev, dW, db = linear_backward(dZ, linear_cache)
+print ("dA_prev = "+ str(dA_prev))
+print ("dW = " + str(dW))
+print ("db = " + str(db))
