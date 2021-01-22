@@ -5,15 +5,12 @@ import h5py
 import matplotlib.pyplot as plt
 from testCases_v4a import *
 from dnn_utils_v2 import sigmoid, sigmoid_backward, relu, relu_backward
+import sys
 
 # set defaults for plots
 plt.rcParams['figure.figsize'] = (5.0, 4.0)
 plt.rcParams['image.interpolation'] = 'nearest'
 plt.rcParams['image.cmap'] = 'gray'
-
-# # automate the reloading of functions
-# %load_ext autoreload
-# %autoreload 2
 
 # seed for randomly initialized weights
 np.random.seed(1)
@@ -78,8 +75,8 @@ def initialize_parameters_deep(layer_dims):
     for l in range(1,L):
         parameters['W' + str(l)] = np.random.randn(layer_dims[l], layer_dims[l-1]) * 0.01
         parameters['b' + str(l)] = np.zeros((layer_dims[l], 1))
-        # assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
-        # assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
+        assert(parameters['W' + str(l)].shape == (layer_dims[l], layer_dims[l-1]))
+        assert(parameters['b' + str(l)].shape == (layer_dims[l], 1))
 
     return parameters
 # # Test the initialize_parameters_deep function
@@ -114,7 +111,8 @@ def linear_forward(A, W, b):
     return Z, cache
 # # Test the linear_forward function
 # A, W, b = linear_forward_test_case()
-# rprint("Z = " + str(Z))
+# Z, linear_cache = linear_forward(A, W, b)
+# print("Z = " + str(Z))
 
 # Function for the activation part of forward propagation
 def linear_activation_forward(A_prev, W, b, activation):
@@ -211,6 +209,8 @@ def compute_cost(AL, Y):
 
     return cost
 # # Test the compute_cost function
+# Y, AL = compute_cost_test_case()
+# print("cost = " + str(compute_cost(AL, Y)))
 
 # Function for the linear part of backpropagation
 def linear_backward(dZ, cache):
@@ -238,9 +238,9 @@ def linear_backward(dZ, cache):
     assert (db.shape == b.shape)
 
     return dA_prev, dW, db
-# Test the linear_backward function
-dZ, linear_cache = linear_backward_test_case()
-dA_prev, dW, db = linear_backward(dZ, linear_cache)
-print ("dA_prev = "+ str(dA_prev))
-print ("dW = " + str(dW))
-print ("db = " + str(db))
+# # Test the linear_backward function
+# dZ, linear_cache = linear_backward_test_case()
+# dA_prev, dW, db = linear_backward(dZ, linear_cache)
+# print ("dA_prev = "+ str(dA_prev))
+# print ("dW = " + str(dW))
+# print ("db = " + str(db))
