@@ -15,47 +15,6 @@ plt.rcParams['image.cmap'] = 'gray'
 # seed for randomly initialized weights
 np.random.seed(1)
 
-# # Function for initializing the parameters W and b
-# def initialize_parameters(n_x, n_h, n_y):
-#     """
-#     Argument:
-#     n_x -- size of the input layer
-#     n_h -- size of the hidden layer
-#     n_y -- size of the output layer
-#
-#     Returns:
-#     parameters -- python dictionary containing your parameters:
-#                     W1 -- weight matrix of shape (n_h, n_x)
-#                     b1 -- bias vector of shape (n_h, 1)
-#                     W2 -- weight matrix of shape (n_y, n_h)
-#                     b2 -- bias vector of shape (n_y, 1)
-#     """
-#
-#     np.random.seed(1)
-#
-#     W1 = np.random.randn(n_h, n_x) * 0.01
-#     b1 = np.zeros((n_h, 1))
-#     W2 = np.random.randn(n_y, n_h) * 0.01
-#     b2 = np.zeros((n_y, 1))
-#
-#     assert(W1.shape == (n_h, n_x))
-#     assert(b1.shape == (n_h, 1))
-#     assert(W2.shape == (n_y, n_h))
-#     assert(b2.shape == (n_y, 1))
-#
-#     parameters = {"W1": W1,
-#                   "b1": b1,
-#                   "W2": W2,
-#                   "b2": b2}
-#
-#     return parameters
-# # # Test the initialize_parameters function
-# # parameters = initialize_parameters(3,2,1)
-# # print("W1 = " + str(parameters["W1"]))
-# # print("b1 = " + str(parameters["b1"]))
-# # print("W2 = " + str(parameters["W2"]))
-# # print("b2 = " + str(parameters["b2"]))
-
 # Function for initializing the parameters W and b for a deep network
 def initialize_parameters_deep(layer_dims):
     """
@@ -244,3 +203,43 @@ def linear_backward(dZ, cache):
 # print ("dA_prev = "+ str(dA_prev))
 # print ("dW = " + str(dW))
 # print ("db = " + str(db))
+
+# Function for the activation part of backpropagation
+def linear_activation_backward(dA, cache, activation):
+    """
+    Implement the backward propagation for the LINEAR->ACTIVATION layer.
+
+    Arguments:
+    dA -- post-activation gradient for current layer l
+    cache -- tuple of values (linear_cache, activation_cache) we store for computing backward propagation efficiently
+    activation -- the activation to be used in this layer, stored as a text string: "sigmoid" or "relu"
+
+    Returns:
+    dA_prev -- Gradient of the cost with respect to the activation (of the previous layer l-1), same shape as A_prev
+    dW -- Gradient of the cost with respect to W (current layer l), same shape as W
+    db -- Gradient of the cost with respect to b (current layer l), same shape as b
+    """
+    linear_cache, activation_cache = cache
+
+    if activation == "relu":
+        dZ = relu_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+
+    elif activation == "sigmoid":
+        dZ = sigmoid_backward(dA, activation_cache)
+        dA_prev, dW, db = linear_backward(dZ, linear_cache)
+
+    return dA_prev, dW, db
+# Test the linear_activation_backward function
+dAL, linear_activation_cache = linear_activation_backward_test_case()
+linear_activation_backward(dAL, linear_activation_cache, activation = "sigmoid")
+dA_prev, dW, db = linear_activation_backward(dAL, linear_activation_cache, activation = "sigmoid")
+print ("sigmoid:")
+print ("dA_prev = "+ str(dA_prev))
+print ("dW = " + str(dW))
+print ("db = " + str(db) + "\n")
+dA_prev, dW, db = linear_activation_backward(dAL, linear_activation_cache, activation = "relu")
+print ("relu:")
+print ("dA_prev = "+ str(dA_prev))
+print ("dW = " + str(dW))
+print ("db = " + str(db))
