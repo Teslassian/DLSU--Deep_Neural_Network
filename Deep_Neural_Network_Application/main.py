@@ -54,7 +54,7 @@ print ("test_x's shape: " + str(test_x.shape))
 n_x = 12288
 n_h = 7
 n_y = 1
-layer_dims = (n_x, n_h, n_y)
+layers_dims = (n_x, n_h, n_y)
 
 # Implementation of the 2-layer network
 def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 3000, print_cost=False):
@@ -167,13 +167,46 @@ def L_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 30
     costs = []
 
     # Parameter initialization
-    parameters = initialize_parameters_deep(layer_dims)
+    parameters = initialize_parameters_deep(layers_dims)
 
     # Loop - gradient descent
-    for i in range(0, num_iterations)
+    for i in range(0, num_iterations):
+
+        # Forward propagation
+        AL, caches = L_model_forward(X, parameters)
+
+        # Cost computation
+        cost = compute_cost(AL, Y)
+
+        # Backpropagation
+        grads = L_model_backward(AL, Y, caches)
+
+        # Update parameters
+        parameters = update_parameters(parameters, grads, learning_rate)
+
+        # Print the cost every 100th training example
+        if print_cost and i % 100 == 0:
+            print ("Cost after iteration %i: %f" %(i, cost))
+        if print_cost and i % 100 == 0:
+            costs.append(cost)
+
+    # Plot the cost
+    plt.plot(np.squeeze(costs))
+    plt.ylabel('cost')
+    plt.xlabel('iterations (per hundreds)')
+    plt.title("Learning rate =" + str(learning_rate))
+    plt.show()
+
+    return parameters
 
 # Train the 4-layer network
+parameters = L_layer_model(train_x, train_y, layers_dims, num_iterations = 2500, print_cost = True)
 
 # Test the accuracy on the training set
+pred_train = predict(train_x, train_y, parameters)
 
 # Test the accuracy on the test set
+pred_test = predict(test_x, test_y, parameters)
+
+#---------------------------------------------------------------------------------------------------------------------#
+print_mislabeled_images(classes, test_x, test_y, pred_test)
