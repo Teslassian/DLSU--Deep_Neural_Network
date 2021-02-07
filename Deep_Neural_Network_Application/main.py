@@ -76,7 +76,7 @@ def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 
     np.random.seed(1)
     grads = {}
     costs = []
-    m = X.shape[1]
+    # m = X.shape[1]
     (n_x, n_h, n_y) = layers_dims
 
     # Initialize the parameters
@@ -118,7 +118,7 @@ def two_layer_model(X, Y, layers_dims, learning_rate = 0.0075, num_iterations = 
         W2 = parameters["W2"]
         b2 = parameters["b2"]
 
-        # Print the cost every 100 training example
+        # Print the cost every 100th training example
         if print_cost and i % 100 == 0:
             print("Cost after iteration {}: {}".format(i, np.squeeze(cost)))
         if print_cost and i % 100 == 0:
