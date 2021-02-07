@@ -1,10 +1,10 @@
-import time
+# import time
 import numpy as np
-import h5py
+# import h5py
 import matplotlib as plt
-import scipy
-from PIL import Image
-from scipy import ndimage
+# import scipy
+# from PIL import Image
+# from scipy import ndimage
 from dnn_app_utils_v3 import *
 
 #---------------------------------------------------------------------------------------------------------------------#
